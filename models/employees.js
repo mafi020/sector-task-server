@@ -6,7 +6,7 @@ const employeeSchema = new Schema(
     sectors: Array,
     terms: Boolean,
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 );
 
 module.exports = model('Employee', employeeSchema);

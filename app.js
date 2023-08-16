@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const Employee = require('./models/employees');
 const Sector = require('./models/sectors');
+const { employeeValidator } = require('./middlewares/employeeValidator');
 
 const app = express();
 app.use(express.json());
@@ -28,13 +29,13 @@ app.get('/sectors', async (req, res, next) => {
 
 app.get('/employees', async (req, res, next) => {
   try {
-    const exployees = await Employee.find().lean();
+    const exployees = await Employee.find().sort({ createdAt: -1 }).lean();
     res.status(200).json({ sucess: true, data: exployees });
   } catch (err) {
     res.status(500).json({ sucess: false, err });
   }
 });
-app.post('/employees', async (req, res, next) => {
+app.post('/employees', employeeValidator, async (req, res, next) => {
   try {
     const exployee = await Employee.create(req.body);
     res.status(201).json({ sucess: true, data: exployee });
@@ -42,7 +43,7 @@ app.post('/employees', async (req, res, next) => {
     res.status(500).json({ sucess: false, err });
   }
 });
-app.put('/employees/:id', async (req, res, next) => {
+app.put('/employees/:id', employeeValidator, async (req, res, next) => {
   try {
     const { id } = req.params;
     const employee = await Employee.findOne({ _id: id }).lean();
